@@ -182,8 +182,6 @@ RTC_CONFIGURATION = {
     ]
 }
 
-st.info("📷 Please allow camera access when prompted")
-
 webrtc_streamer(
     key="object-detection",
     mode=WebRtcMode.SENDRECV,
