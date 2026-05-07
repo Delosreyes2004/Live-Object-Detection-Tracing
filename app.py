@@ -7,6 +7,7 @@ import os
 from datetime import datetime
 from ultralytics import YOLO
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, WebRtcMode
+
 st.set_page_config(
     page_title="Live Object Detection & Tracing",
     layout="wide",
@@ -50,67 +51,6 @@ video {
     width: 100% !important;
     height: auto !important;
 }
-
-.alert-box {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: #fef2f2;
-    padding: 15px;
-    border-radius: 12px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
-    border: 1px solid rgba(255,255,255,0.2);
-}
-
-.success-box {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: #f0fdf4;
-    padding: 15px;
-    border-radius: 12px;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-    border: 1px solid rgba(255,255,255,0.2);
-}
-
-.stSelectbox > div > div > div {
-    background-color: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 8px !important;
-    color: #1e293b !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.stToggle > div {
-    background-color: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 8px !important;
-}
-
-.stCheckbox > label {
-    color: #334155 !important;
-    font-weight: 500 !important;
-}
-
-@media (max-width: 768px) {
-    .stApp {
-        padding: 0.5rem;
-    }
-    h1 {
-        font-size: 1.8rem !important;
-    }
-    video {
-        border-radius: 10px !important;
-    }
-    .alert-box, .success-box {
-        font-size: 16px;
-        padding: 12px;
-    }
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -124,7 +64,6 @@ class_names = list(model.names.values())
 st.sidebar.title("⚙️ Detection Settings")
 
 save_frames = st.sidebar.checkbox("📸 Save Frames", value=False)
-
 enable_alert = st.sidebar.toggle("🚨 Enable Alert", value=True)
 
 target_object = st.sidebar.selectbox(
@@ -155,34 +94,23 @@ class VideoProcessor(VideoProcessorBase):
     def recv(self, frame):
 
         img = frame.to_ndarray(format="bgr24")
-
         img = cv2.flip(img, 1)
-
         img = cv2.resize(img, (640, 480))
 
-        results = model.predict(
-            img,
-            conf=confidence,
-            verbose=False
-        )
+        results = model.predict(img, conf=confidence, verbose=False)
 
         object_counts = {}
         target_detected = False
 
         for r in results:
-
             boxes = r.boxes
 
             if boxes is not None:
-
                 for box in boxes:
 
                     x1, y1, x2, y2 = map(int, box.xyxy[0])
-
                     cls_id = int(box.cls[0])
-
                     label = model.names[cls_id]
-
                     conf_score = float(box.conf[0])
 
                     object_counts[label] = object_counts.get(label, 0) + 1
@@ -241,11 +169,9 @@ class VideoProcessor(VideoProcessorBase):
         if save_frames and current_time - self.last_saved >= 5:
 
             filename = datetime.now().strftime("%Y%m%d_%H%M%S.jpg")
-
             filepath = os.path.join(SAVE_DIR, filename)
 
             cv2.imwrite(filepath, img)
-
             self.last_saved = current_time
 
         self.frame_count += 1
@@ -272,4 +198,5 @@ webrtc_streamer(
     },
     video_processor_factory=VideoProcessor,
     async_processing=True,
+    desired_playing_state=True
 )
