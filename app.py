@@ -1,9 +1,9 @@
+import os
+os.environ["STREAMLIT_WATCHER_TYPE"] = "none"
 import streamlit as st
 import av
 import cv2
 import time
-import os
-
 from datetime import datetime
 from ultralytics import YOLO
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, WebRtcMode
