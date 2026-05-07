@@ -90,7 +90,6 @@ class_names = list(model.names.values())
 st.sidebar.title("⚙️ Settings")
 save_frames = st.sidebar.checkbox("Save Frames", False)
 st.sidebar.markdown("---")
-st.sidebar.subheader("🚨 Alert Settings")
 enable_alert = st.sidebar.toggle("Enable Alert", True)
 
 target_object = st.sidebar.selectbox(
