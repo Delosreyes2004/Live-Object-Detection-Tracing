@@ -36,7 +36,6 @@ st.markdown("""
 h1, h2, h3 {
     color: #1d4ed8 !important;
     font-weight: 700 !important;
-    text-shadow: 0 1px 3px rgba(29, 78, 216, 0.1);
 }
 
 p, label {
@@ -47,7 +46,6 @@ p, label {
 video {
     border-radius: 15px !important;
     border: 2px solid #3b82f6 !important;
-    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
     width: 100% !important;
     height: auto !important;
 }
@@ -184,19 +182,16 @@ RTC_CONFIGURATION = {
     ]
 }
 
+st.info("📷 Please allow camera access when prompted")
+
 webrtc_streamer(
     key="object-detection",
     mode=WebRtcMode.SENDRECV,
     rtc_configuration=RTC_CONFIGURATION,
     media_stream_constraints={
-        "video": {
-            "width": {"ideal": 640},
-            "height": {"ideal": 480},
-            "facingMode": "user"
-        },
+        "video": True,
         "audio": False
     },
     video_processor_factory=VideoProcessor,
-    async_processing=True,
-    desired_playing_state=True
+    async_processing=False,
 )
